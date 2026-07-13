@@ -359,7 +359,7 @@
 
 <script>
   const ambient = document.getElementById('ambient');
-  const heartChars = ['🩷','♡','✦'];
+  const heartChars = ['♡','✦'];
   for(let i=0;i<12;i++){
     const s = document.createElement('span');
     s.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
@@ -391,7 +391,6 @@
     img.addEventListener('error', function(){ this.onerror = null; this.src = PLACEHOLDER; });
   });
 
-  // wire up gallery cards
   document.querySelectorAll('.gallery-card').forEach(card=>{
     card.addEventListener('click', ()=>{
       const img = card.querySelector('img');
