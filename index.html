@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>for juju :)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF9FA;
+    --blush:#FFE1EA;
+    --pink:#FFB8CE;
+    --rose:#E8557A;
+    --deep:#8C4A5C;
+    --white:#FFFFFF;
+    --shadow: 0 20px 50px rgba(232,85,122,0.16);
+  }
+  *{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select:none;
+  }
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    background:
+      radial-gradient(circle at 15% 20%, #FFEEF3 0%, transparent 45%),
+      radial-gradient(circle at 85% 75%, #FFE7EF 0%, transparent 50%),
+      var(--cream);
+    font-family:'Quicksand', sans-serif;
+    color: var(--deep);
+    overflow-x:hidden;
+  }
+
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding: 44px 20px 70px;
+    position:relative;
+  }
+
+  .ambient{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    overflow:hidden;
+  }
+  .ambient span{
+    position:absolute;
+    bottom:-40px;
+    font-size: 18px;
+    color: var(--pink);
+    opacity:0.5;
+    animation: drift linear infinite;
+  }
+  @keyframes drift{
+    0%{
+      transform: translateY(0) rotate(0deg);
+      opacity:0;
+    }
+    10%{
+      opacity:0.55;
+    }
+    90%{
+      opacity:0.4;
+    }
+    100%{
+      transform: translateY(-110vh) rotate(25deg);
+      opacity:0;
+    }
+  }
+
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--rose);
+    font-weight:600;
+    margin-bottom:10px;
+    z-index:1;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size: clamp(26px, 7vw, 42px);
+    text-align:center;
+    margin: 0 0 8px;
+    color: var(--deep);
+    z-index:1;
+    line-height:1.15;
+  }
+  .sub{
+    text-align:center;
+    font-size:14.5px;
+    color:#A9737F;
+    max-width:340px;
+    margin: 0 0 30px;
+    z-index:1;
+    line-height:1.5;
+  }
+
+  .card{
+    background: var(--white);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    padding: 22px;
+    width: min(92vw, 400px);
+    z-index:1;
+    position:relative;
+  }
+
+  #galleryScreen.hidden{
+    display:none;
+  }
+  .gallery-grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .gallery-card{
+    cursor:pointer;
+    border-radius: 18px;
+    overflow:hidden;
+    background: var(--blush);
+    box-shadow: 0 6px 16px rgba(140,74,92,0.14);
+    transition: transform .15s ease;
+  }
+  .gallery-card:active{
+    transform: scale(0.96);
+  }
+  .gallery-img{
+    width:100%;
+    overflow:hidden;
+    aspect-ratio: 4/3;
+  }
+  .gallery-img img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .gallery-caption{
+    padding: 10px 12px 12px;
+  }
+  .gallery-caption-title{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size: 14.5px;
+    color: var(--rose);
+    margin-bottom: 2px;
+  }
+  .gallery-caption-text{
+    font-size: 11.5px;
+    color:#B98795;
+    line-height:1.4;
+  }
+
+  .reveal{
+    opacity:0;
+    transform: translateY(14px);
+    animation: revealIn .55s ease forwards;
+  }
+  .reveal-delay-1{
+    animation-delay: .08s;
+  }
+  .reveal-delay-2{
+    animation-delay: .16s;
+  }
+  .reveal-delay-3{
+    animation-delay: .24s;
+  }
+  @keyframes revealIn{
+    to{
+      opacity:1;
+      transform:none;
+    }
+  }
+
+  #puzzleScreen.hidden{
+    display:none;
+  }
+  .puzzle-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom: 14px;
+  }
+  .back-btn{
+    border:none;
+    background: var(--blush);
+    color:var(--rose);
+    font-family:'Quicksand',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor:pointer;
+  }
+  .meta{
+    font-size:13px;
+    color:#B98795;
+  }
+  .meta b{
+    color:var(--rose);
+    font-weight:700;
+  }
+
+  .board{
+    position:relative;
+    width:100%;
+    aspect-ratio: 1/1;
+    border-radius: 18px;
+    background: var(--blush);
+    overflow:hidden;
+    touch-action:none;
+  }
+  .piece{
+    position:absolute;
+    width: 33.3333%;
+    height: 33.3333%;
+    background-repeat:no-repeat;
+    background-size: 300% 300%;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(140,74,92,0.22);
+    cursor: grab;
+    transition: left .28s cubic-bezier(.2,.9,.3,1.2), top .28s cubic-bezier(.2,.9,.3,1.2), box-shadow .15s ease;
+    z-index: 1;
+  }
+  .piece.dragging{
+    cursor: grabbing;
+    transition: none;
+    box-shadow: 0 14px 26px rgba(140,74,92,0.35);
+    z-index: 5;
+    scale: 1.04;
+  }
+
+  .btn-row{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+  }
+  button.pill{
+    flex:1;
+    border:none;
+    border-radius:999px;
+    padding:12px 16px;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    transition: transform .15s ease;
+  }
+  button.pill:active{
+    transform: scale(0.97);
+  }
+  .pill.primary{
+    background: var(--rose);
+    color:#fff;
+  }
+  .pill.ghost{
+    background: var(--blush);
+    color: var(--rose);
+  }
+
+  footer{
+    margin-top:34px;
+    font-size:12px;
+    color:#CBA0A9;
+    z-index:1;
+    text-align:center;
+  }
+
+  .confetti{
+    position:fixed;
+    top:-10%;
+    z-index:11;
+    pointer-events:none;
+    animation: fall linear forwards;
+    border-radius:50%;
+  }
+  @keyframes fall{
+    to{
+      transform: translateY(115vh) rotate(360deg);
+      opacity:0.2;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient" id="ambient"></div>
+
+<div class="wrap">
+  <div class="eyebrow">unscramble a memory</div>
+  <h1>pick a memory<br>to piece back together</h1>
+  <p class="sub">a very late bday gift XD</p>
+
+  <div class="card">
+    <div id="galleryScreen">
+      <div class="gallery-grid" id="galleryGrid">
+
+        <div class="gallery-card reveal">
+          <div class="gallery-img"><img src="pics/photo1.jpeg" alt="25.5.2026" style="object-position: center 20%;" /></div>
+          <div class="gallery-caption">
+            <div class="gallery-caption-title">25.5.2026</div>
+            <div class="gallery-caption-text">lafena iskndrya kolha 3shan mngbsh haga</div>
+          </div>
+        </div>
+
+        <div class="gallery-card reveal reveal-delay-1">
+          <div class="gallery-img"><img src="pics/photo2.jpeg" alt="22.5.2026" style="object-position: center 15%;" /></div>
+          <div class="gallery-caption">
+            <div class="gallery-caption-title">22.5.2026</div>
+            <div class="gallery-caption-text">akher youm exams w yap sesh ab someone</div>
+          </div>
+        </div>
+
+        <div class="gallery-card reveal reveal-delay-2">
+          <div class="gallery-img"><img src="pics/photo3.jpeg" alt="9.7.2026" style="object-position: center 25%;" /></div>
+          <div class="gallery-caption">
+            <div class="gallery-caption-title">9.7.2026</div>
+            <div class="gallery-caption-text">jacket 3shan aboya w kees kajo b 50 geneh</div>
+          </div>
+        </div>
+
+        <div class="gallery-card reveal reveal-delay-3">
+          <div class="gallery-img"><img src="pics/photo4.jpeg" alt="12.7.2026" style="object-position: center 25%;" /></div>
+          <div class="gallery-caption">
+            <div class="gallery-caption-title">12.7.2026</div>
+            <div class="gallery-caption-text">u should trust me fl sowar b3d kda</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="puzzleScreen" class="hidden">
+      <div class="puzzle-header">
+        <button class="back-btn" id="backBtn">← memories</button>
+        <span class="meta">moves: <b id="moveCount">0</b></span>
+      </div>
+      <div class="board" id="board"></div>
+      <div class="btn-row">
+        <button class="pill ghost" id="shuffleBtn">shuffle again</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>made with a lot of love, for my person</footer>
+</div>
+
+<script>
+  const ambient = document.getElementById('ambient');
+  const heartChars = ['🩷','♡','✦'];
+  for(let i=0;i<12;i++){
+    const s = document.createElement('span');
+    s.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.fontSize = (12+Math.random()*14)+'px';
+    s.style.animationDuration = (10+Math.random()*14)+'s';
+    s.style.animationDelay = (Math.random()*10)+'s';
+    ambient.appendChild(s);
+  }
+
+  const SIZE = 3;
+  const N = SIZE*SIZE;
+  let currentImg = null;
+  let slotOf = [];
+  let pieceEls = [];
+  let moves = 0;
+  let dragState = null;
+
+  const galleryGrid = document.getElementById('galleryGrid');
+  const galleryScreen = document.getElementById('galleryScreen');
+  const puzzleScreen = document.getElementById('puzzleScreen');
+  const board = document.getElementById('board');
+  const moveCountEl = document.getElementById('moveCount');
+
+  const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600"><rect width="600" height="600" fill="#FFE3ED"/></svg>`
+  );
+  document.querySelectorAll('.gallery-img img').forEach(img=>{
+    img.addEventListener('error', function(){ this.onerror = null; this.src = PLACEHOLDER; });
+  });
+
+  // wire up gallery cards
+  document.querySelectorAll('.gallery-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const img = card.querySelector('img');
+      openPuzzle(img.src);
+    });
+  });
+
+  document.getElementById('backBtn').addEventListener('click', ()=>{
+    puzzleScreen.classList.add('hidden');
+    galleryScreen.classList.remove('hidden');
+  });
+  document.getElementById('shuffleBtn').addEventListener('click', shuffle);
+
+  function openPuzzle(src){
+    currentImg = src;
+    galleryScreen.classList.add('hidden');
+    puzzleScreen.classList.remove('hidden');
+    buildBoard();
+    shuffle();
+  }
+
+  function buildBoard(){
+    board.innerHTML = '';
+    pieceEls = [];
+    for(let i=0;i<N;i++){
+      const el = document.createElement('div');
+      el.className = 'piece';
+      const row = Math.floor(i/SIZE), col = i%SIZE;
+      el.style.backgroundImage = `url(${currentImg})`;
+      el.style.backgroundPosition = `${col*50}% ${row*50}%`;
+      el.dataset.piece = i;
+      attachDrag(el);
+      board.appendChild(el);
+      pieceEls.push(el);
+    }
+  }
+
+  function slotCoords(slot){
+    const row = Math.floor(slot/SIZE), col = slot%SIZE;
+    return { left: col*(100/SIZE), top: row*(100/SIZE) };
+  }
+
+  function layout(){
+    pieceEls.forEach((el, pieceIdx)=>{
+      const { left, top } = slotCoords(slotOf[pieceIdx]);
+      el.style.left = left + '%';
+      el.style.top = top + '%';
+    });
+  }
+
+  function shuffle(){
+    moves = 0;
+    moveCountEl.textContent = 0;
+    let arr;
+    do {
+      arr = Array.from({length:N}, (_,i)=>i);
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]] = [arr[j],arr[i]];
+      }
+    } while(arr.every((v,i)=> v===i));
+    slotOf = arr;
+    layout();
+  }
+
+  function attachDrag(el){
+    el.addEventListener('pointerdown', (e)=>{
+      e.preventDefault();
+      const rect = board.getBoundingClientRect();
+      const pieceIdx = parseInt(el.dataset.piece);
+      dragState = {
+        pieceIdx,
+        startX: e.clientX,
+        startY: e.clientY,
+        boardRect: rect,
+        origLeft: parseFloat(el.style.left),
+        origTop: parseFloat(el.style.top)
+      };
+      el.classList.add('dragging');
+      el.setPointerCapture(e.pointerId);
+    });
+
+    el.addEventListener('pointermove', (e)=>{
+      if(!dragState || parseInt(el.dataset.piece) !== dragState.pieceIdx) return;
+      const dx = ((e.clientX - dragState.startX) / dragState.boardRect.width) * 100;
+      const dy = ((e.clientY - dragState.startY) / dragState.boardRect.height) * 100;
+      el.style.left = (dragState.origLeft + dx) + '%';
+      el.style.top = (dragState.origTop + dy) + '%';
+    });
+
+    el.addEventListener('pointerup', (e)=> finishDrag(el, e));
+    el.addEventListener('pointercancel', (e)=> finishDrag(el, e));
+  }
+
+  function finishDrag(el, e){
+    if(!dragState || parseInt(el.dataset.piece) !== dragState.pieceIdx) return;
+    el.classList.remove('dragging');
+
+    const rect = board.getBoundingClientRect();
+    const centerX = e.clientX - rect.left;
+    const centerY = e.clientY - rect.top;
+    let col = Math.floor((centerX / rect.width) * SIZE);
+    let row = Math.floor((centerY / rect.height) * SIZE);
+    col = Math.max(0, Math.min(SIZE-1, col));
+    row = Math.max(0, Math.min(SIZE-1, row));
+    const targetSlot = row*SIZE + col;
+
+    const pieceIdx = dragState.pieceIdx;
+    const fromSlot = slotOf[pieceIdx];
+
+    if(targetSlot !== fromSlot){
+      const otherPieceIdx = slotOf.indexOf(targetSlot);
+      slotOf[pieceIdx] = targetSlot;
+      slotOf[otherPieceIdx] = fromSlot;
+      moves++;
+      moveCountEl.textContent = moves;
+    }
+    layout();
+    dragState = null;
+    checkWin();
+  }
+
+  function checkWin(){
+    const solved = slotOf.every((s, i)=> s === i);
+    if(solved){
+      launchConfetti();
+    }
+  }
+
+  function launchConfetti(){
+    const colors = ['#FFB8CE','#E8557A','#FFE1EA','#FFFFFF'];
+    for(let i=0;i<30;i++){
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      const size = 6 + Math.random()*8;
+      c.style.width = size+'px';
+      c.style.height = size+'px';
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      c.style.left = Math.random()*100+'vw';
+      c.style.animationDuration = (2.2+Math.random()*1.6)+'s';
+      document.body.appendChild(c);
+      setTimeout(()=> c.remove(), 4000);
+    }
+  }
+</script>
+
+</body>
+</html>
